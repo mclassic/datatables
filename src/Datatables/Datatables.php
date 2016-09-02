@@ -157,6 +157,6 @@ class Datatables implements DataArray, DatatableContract
             "data"            => $this->table,
         ];
 
-        return response()->json($output);
+        return json_encode($output);
     }
 }
