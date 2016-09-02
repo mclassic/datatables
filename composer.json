@@ -1,0 +1,30 @@
+{
+    "name": "mclassic/datatables",
+    "type": "library",
+    "description": "Server-side processor for jQuery Datatables plugin",
+    "keywords": [
+        "jquery",
+        "datatables"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mike Classic",
+            "role": "Developer"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/mclassic/datatables"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "MClassic\\": "src/"
+        }
+    }
+}
