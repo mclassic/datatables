@@ -13,6 +13,7 @@ class Datatables implements DataArray, DatatableContract
     protected $columns           = [];
     protected $count_all         = 0;
     protected $count_page        = 0;
+    protected $draw;
     protected $offset            = 0;
     protected $searchableColumns = [];
     protected $searchCallback;
@@ -24,6 +25,9 @@ class Datatables implements DataArray, DatatableContract
         $this->columns = $columns;
         foreach ($options as $option => $value) {
             switch (strtolower($option)) {
+                case 'draw':
+                    $this->draw = (int) $value;
+                    break;
                 case 'page':
                     break;
                 default:
@@ -151,7 +155,7 @@ class Datatables implements DataArray, DatatableContract
     {
         $this->count_all = count($this->table);
         $output = [
-            "draw"            => (int) \Input::get('draw'),
+            "draw"            => (int) $this->draw,
             "recordsTotal"    => $this->total,
             "recordsFiltered" => $this->total,
             "data"            => $this->table,
