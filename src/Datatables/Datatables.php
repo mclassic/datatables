@@ -2,6 +2,10 @@
 
 namespace MClassic\Datatables;
 
+use MClassic\Datatables\Engine\Legacy;
+use MClassic\Datatables\Engine\Modern;
+use MClassic\Datatables\Engine\ProtocolEngine;
+
 /**
  * Server-side processor for jQuery's DataTables plugin.
  * This class is now only compatible with the protocol used for DataTables 1.10+.
@@ -10,11 +14,13 @@ namespace MClassic\Datatables;
  */
 class Datatables implements DataArray, DatatableContract
 {
-    protected $columns           = [];
-    protected $count_all         = 0;
-    protected $count_page        = 0;
+    protected $columns    = [];
+    protected $count_all  = 0;
+    protected $count_page = 0;
     protected $draw;
-    protected $offset            = 0;
+    protected $offset     = 0;
+    /** @var  ProtocolEngine */
+    protected $protocol;
     protected $searchableColumns = [];
     protected $searchCallback;
     protected $table             = [];
@@ -27,6 +33,11 @@ class Datatables implements DataArray, DatatableContract
             switch (strtolower($option)) {
                 case 'draw':
                     $this->draw = (int) $value;
+                    $this->setProtocol(new Modern());
+                    break;
+                case 'secho':
+                    $this->draw = (int) $value;
+                    $this->setProtocol(new Legacy());
                     break;
                 case 'page':
                     break;
@@ -60,7 +71,7 @@ class Datatables implements DataArray, DatatableContract
      */
     protected function resetCounts()
     {
-        $this->count_page = count($this->table);
+        $this->count_page = $this->total = count($this->table);
     }
 
     /**
@@ -141,6 +152,26 @@ class Datatables implements DataArray, DatatableContract
         $this->resetCounts();
     }
 
+    /**
+     * Return protocol engine.
+     *
+     * @return ProtocolEngine
+     */
+    public function getProtocol()
+    {
+        return $this->protocol;
+    }
+
+    /**
+     * Set protocol engine to use.
+     *
+     * @param ProtocolEngine $protocol
+     */
+    public function setProtocol(ProtocolEngine $protocol)
+    {
+        $this->protocol = $protocol;
+    }
+
     public function setTotal($total)
     {
         $this->total = (int) $total;
@@ -155,10 +186,10 @@ class Datatables implements DataArray, DatatableContract
     {
         $this->count_all = count($this->table);
         $output = [
-            "draw"            => (int) $this->draw,
-            "recordsTotal"    => $this->total,
-            "recordsFiltered" => $this->total,
-            "data"            => $this->table,
+            $this->protocol->draw()          => (int) $this->draw,
+            $this->protocol->totalRecords()  => (int) $this->total,
+            $this->protocol->totalFiltered() => (int) $this->total,
+            $this->protocol->data()          => $this->table,
         ];
 
         return json_encode($output);
