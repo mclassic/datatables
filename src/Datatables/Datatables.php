@@ -181,9 +181,14 @@ class Datatables implements DataArray, DatatableContract
     /**
      * {@inheritdoc}
      * @return mixed
+     * @throws MissingProtocolException
      */
     public function output()
     {
+        if (empty($this->protocol)) {
+            throw new MissingProtocolException('The ProtocolEngine has not been set.');
+        }
+
         $this->count_all = count($this->table);
         $output = [
             $this->protocol->draw()          => (int) $this->draw,

@@ -1,6 +1,7 @@
 <?php
 
 use MClassic\Datatables\Datatables;
+use MClassic\Datatables\MissingProtocolException;
 use Mockery as m;
 
 class DatatablesTest extends PHPUnit_Framework_TestCase
@@ -109,6 +110,15 @@ class DatatablesTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Two', $second['name']);
     }
 
+    public function test_missing_option_draw()
+    {
+        $this->setExpectedException(MissingProtocolException::class);
+        $datatables = new Datatables();
+        $this->assertNull($datatables->getProtocol(), 'Datatables should return a null ProtocolEngine.');
+        // This will throw an exception because the protocol engine was not set via options or explcitly using setProtocol()
+        $output = $datatables->output();
+    }
+
     public function test_new_table_draw()
     {
         $datatables = new Datatables([], ['draw' => 23]);
@@ -146,8 +156,8 @@ class DatatablesTest extends PHPUnit_Framework_TestCase
         $datatables = new Datatables([], ['sEcho' => 123]);
         $data = [
             [
-                'id' => 1
-            ]
+                'id' => 1,
+            ],
         ];
 
         $datatables->setData($data);
