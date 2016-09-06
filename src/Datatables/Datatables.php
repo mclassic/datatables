@@ -26,9 +26,9 @@ class Datatables implements DataArray, DatatableContract
     protected $table             = [];
     protected $total             = 0;
 
-    public function __construct(array $columns = [], array $options = [])
+    public function __construct(array $options = [])
     {
-        $this->columns = $columns;
+        // $this->columns = $columns;
         foreach ($options as $option => $value) {
             switch (strtolower($option)) {
                 case 'draw':

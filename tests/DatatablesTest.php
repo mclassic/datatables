@@ -18,7 +18,7 @@ class DatatablesTest extends PHPUnit_Framework_TestCase
 
     public function test_array_push()
     {
-        $datatables = new Datatables([], ['draw' => 1]);
+        $datatables = new Datatables(['draw' => 1]);
         $data = [
             [
                 'id'   => 1,
@@ -39,7 +39,7 @@ class DatatablesTest extends PHPUnit_Framework_TestCase
 
     public function test_array_unshift()
     {
-        $datatables = new Datatables([], ['draw' => 1]);
+        $datatables = new Datatables(['draw' => 1]);
         $data = [
             [
                 'id'   => 1,
@@ -60,7 +60,7 @@ class DatatablesTest extends PHPUnit_Framework_TestCase
 
     public function test_array_pop()
     {
-        $datatables = new Datatables([], ['draw' => 1]);
+        $datatables = new Datatables(['draw' => 1]);
         $data = [
             [
                 'id'   => 1,
@@ -86,7 +86,7 @@ class DatatablesTest extends PHPUnit_Framework_TestCase
 
     public function test_array_shift()
     {
-        $datatables = new Datatables([], ['draw' => 1]);
+        $datatables = new Datatables(['draw' => 1]);
         $data = [
             [
                 'id'   => 1,
@@ -121,39 +121,33 @@ class DatatablesTest extends PHPUnit_Framework_TestCase
 
     public function test_new_table_draw()
     {
-        $datatables = new Datatables([], ['draw' => 23]);
+        $datatables = new Datatables(['draw' => 23]);
         $output = json_decode($datatables->output(), true);
 
         $this->assertArrayHasKey('draw', $output);
         $this->assertEquals(23, $output['draw']);
     }
 
-    public function test_new_table_output()
+    public function test_new_table_data_output()
     {
-        $datatables = new Datatables([], ['draw' => 1]);
+        $datatables = new Datatables(['draw' => 3]);
         $data = [
             [
-                'id'          => 1,
-                'name'        => 'Test Name',
-                'description' => 'This is some test data',
-            ],
+                'name'        => 'Test Name'
+            ]
         ];
 
         $datatables->setData($data);
         $output = json_decode($datatables->output(), true);
+        $this->assertArrayHasKey('data', $output);
         $row = $output['data'][0];
 
-        $this->assertArrayHasKey('id', $row);
-        $this->assertEquals(1, $row['id']);
-        $this->assertArrayHasKey('name', $row);
         $this->assertEquals('Test Name', $row['name']);
-        $this->assertArrayHasKey('description', $row);
-        $this->assertEquals('This is some test data', $row['description']);
     }
 
     public function test_old_table_draw()
     {
-        $datatables = new Datatables([], ['sEcho' => 123]);
+        $datatables = new Datatables(['sEcho' => 123]);
         $data = [
             [
                 'id' => 1,
@@ -164,5 +158,22 @@ class DatatablesTest extends PHPUnit_Framework_TestCase
         $output = json_decode($datatables->output(), true);
         $this->assertArrayHasKey('sEcho', $output);
         $this->assertEquals(123, $output['sEcho']);
+    }
+
+    public function test_old_table_data_output()
+    {
+        $datatables = new Datatables(['sEcho' => 2]);
+        $data = [
+            [
+                'name'        => 'Test Name'
+            ]
+        ];
+
+        $datatables->setData($data);
+        $output = json_decode($datatables->output(), true);
+        $this->assertArrayHasKey('aaData', $output);
+        $row = $output['aaData'][0];
+
+        $this->assertEquals('Test Name', $row['name']);
     }
 }

@@ -19,14 +19,14 @@ class ProtocolEngineTest extends PHPUnit_Framework_TestCase
 
     public function test_modern_engine()
     {
-        $datatables = new Datatables([], ['draw' => 123]);
+        $datatables = new Datatables(['draw' => 123]);
         $engine = $datatables->getProtocol();
         $this->assertEquals(ProtocolEngine::VERSION_2, $engine->version(), 'Mismatched protocol version.');
     }
 
     public function test_legacy_engine()
     {
-        $datatables = new Datatables([], ['sEcho' => 123]);
+        $datatables = new Datatables(['sEcho' => 123]);
         $engine = $datatables->getProtocol();
         $this->assertEquals(ProtocolEngine::VERSION_1, $engine->version(), 'Mismatched protocol version.');
     }
