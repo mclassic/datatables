@@ -40,4 +40,11 @@ interface DatatableContract
      * @return mixed
      */
     function setData(array $data);
+
+    /**
+     * Set the total number of records before filtering.
+     *
+     * @param $total int
+     */
+    function setTotal($total);
 }

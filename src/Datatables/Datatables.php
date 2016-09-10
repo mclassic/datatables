@@ -14,11 +14,11 @@ use MClassic\Datatables\Engine\ProtocolEngine;
  */
 class Datatables implements DataArray, DatatableContract
 {
-    protected $columns    = [];
-    protected $count_all  = 0;
-    protected $count_page = 0;
+    protected $columns       = [];
+    protected $totalFiltered = 0;
+    protected $count_page    = 0;
     protected $draw;
-    protected $offset     = 0;
+    protected $offset        = 0;
     /** @var  ProtocolEngine */
     protected $protocol;
     protected $searchableColumns = [];
@@ -67,11 +67,16 @@ class Datatables implements DataArray, DatatableContract
     }
 
     /**
-     * Reset all counts, filtered totals, etc.
+     * Reset all counts, appropriate totals, etc.
+     * @todo Make this do something useful
      */
     protected function resetCounts()
     {
-        $this->count_page = $this->total = count($this->table);
+        $this->count_page = count($this->table);
+        // Provide an initial total if it hasn't yet been set
+        if ($this->total === 0) {
+            $this->total = count($this->table);
+        }
     }
 
     /**
@@ -172,10 +177,13 @@ class Datatables implements DataArray, DatatableContract
         $this->protocol = $protocol;
     }
 
+    /**
+     * {@inheritdoc}
+     * @param int $total
+     */
     public function setTotal($total)
     {
         $this->total = (int) $total;
-        $this->count_all = (int) $total;
     }
 
     /**
@@ -189,7 +197,8 @@ class Datatables implements DataArray, DatatableContract
             throw new MissingProtocolException('The ProtocolEngine has not been set.');
         }
 
-        $this->count_all = count($this->table);
+        $this->totalFiltered = count($this->table);
+        /* @todo Filtered totals are inaccurate, this needs to be fixed ASAP */
         $output = [
             $this->protocol->draw()          => (int) $this->draw,
             $this->protocol->totalRecords()  => (int) $this->total,

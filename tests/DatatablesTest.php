@@ -1,19 +1,52 @@
 <?php
 
 use MClassic\Datatables\Datatables;
+use MClassic\Datatables\Engine\Modern;
+use MClassic\Datatables\Engine\ProtocolEngine;
 use MClassic\Datatables\MissingProtocolException;
 use Mockery as m;
 
 class DatatablesTest extends PHPUnit_Framework_TestCase
 {
+    protected $data;
+
     public function setUp()
     {
         parent::setUp();
+
+        $faker = Faker\Factory::create();
+        $faker->seed(1974);
+        $this->data = [];
+        for ($i = 0; $i < 100; $i++) {
+            $this->data[] = [
+                'id'   => $i + 1,
+                'name' => $faker->name,
+            ];
+        }
     }
 
     public function tearDown()
     {
         parent::tearDown();
+    }
+
+    /**
+     * Return Datatables populated with larger data set.
+     *
+     * @param ProtocolEngine $protocol
+     *
+     * @return Datatables
+     */
+    protected function getDatatablesWithLargeDataset(ProtocolEngine $protocol)
+    {
+        $datatables = new Datatables($protocol->draw([123]));
+        $datatables->setTotal(count($this->data));
+        // var_dump($this->data); die;
+        for ($i = 0; $i < 50; $i++) {
+            $datatables->push($this->data[$i]);
+        }
+
+        return $datatables;
     }
 
     public function test_array_push()
@@ -133,8 +166,8 @@ class DatatablesTest extends PHPUnit_Framework_TestCase
         $datatables = new Datatables(['draw' => 3]);
         $data = [
             [
-                'name'        => 'Test Name'
-            ]
+                'name' => 'Test Name',
+            ],
         ];
 
         $datatables->setData($data);
@@ -165,8 +198,8 @@ class DatatablesTest extends PHPUnit_Framework_TestCase
         $datatables = new Datatables(['sEcho' => 2]);
         $data = [
             [
-                'name'        => 'Test Name'
-            ]
+                'name' => 'Test Name',
+            ],
         ];
 
         $datatables->setData($data);
@@ -175,5 +208,16 @@ class DatatablesTest extends PHPUnit_Framework_TestCase
         $row = $output['aaData'][0];
 
         $this->assertEquals('Test Name', $row['name']);
+    }
+
+    /* @todo This test fails right now because we don't do totals accurately in output() yet */
+    public function test_table_output_totals()
+    {
+        $protocol = new Modern();
+        $datatables = $this->getDatatablesWithLargeDataset($protocol);
+        $output = json_decode($datatables->output(), true);
+        // Uses modern protocol as default
+        $this->assertEquals(100, $output[$protocol->totalRecords()], 'Total records before filtering is inaccurate.');
+        $this->assertEquals(50, $output[$protocol->totalFiltered()], 'Total filtered records is inaccurate.');
     }
 }
