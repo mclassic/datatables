@@ -4,7 +4,6 @@ use MClassic\Datatables\Datatables;
 use MClassic\Datatables\Engine\Modern;
 use MClassic\Datatables\Engine\ProtocolEngine;
 use MClassic\Datatables\MissingProtocolException;
-use Mockery as m;
 
 class DatatablesTest extends PHPUnit_Framework_TestCase
 {
