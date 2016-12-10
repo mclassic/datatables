@@ -46,4 +46,11 @@ class ProtocolEngineTest extends PHPUnit_Framework_TestCase
         $engine = $datatables->getProtocol();
         $this->assertEquals(ProtocolEngine::VERSION_1, $engine->version(), 'Mismatched protocol version.');
     }
+
+    public function test_modern_draw()
+    {
+        $protocol = new Modern();
+        $this->assertEquals('draw', $protocol->draw());
+        $this->assertArraySubset(['draw' => 456], $protocol->draw(456), true, 'Protocol does not match echo.');
+    }
 }

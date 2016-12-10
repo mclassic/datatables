@@ -208,4 +208,25 @@ class Datatables implements DataArray, DatatableContract
 
         return json_encode($output);
     }
+
+    /**
+     * Add a column to the Datatables class.
+     *
+     * @param Column $column
+     *
+     * @return void
+     */
+    function addColumn(Column $column)
+    {
+        $this->columns[] = $column;
+    }
+
+    /**
+     * @return Column[] Array of Columns
+     * @see \MClassic\Datatables\Column\Column
+     */
+    function getColumns()
+    {
+        return $this->columns;
+    }
 }
