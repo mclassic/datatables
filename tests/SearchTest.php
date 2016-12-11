@@ -47,7 +47,6 @@ class SearchTest extends PHPUnit_Framework_TestCase
         }
 
         $this->protocol = new Modern();
-        // var_dump($this->searchableData[0]); die;
     }
 
     public function test_search_array_of_data()
@@ -90,18 +89,19 @@ class SearchTest extends PHPUnit_Framework_TestCase
         }
     }
 
-    public function test_column_properties()
+    public function test_search_query_string()
     {
-        $datatables = new Datatables($this->protocol->draw(123));
-        $options = [
-            'orderable' => false,
-            'visible'   => true,
-        ];
+        $query = 'bill johnson';
+        $search = new Builder();
+        $search = $search->query($query);
 
-        $datatables->addColumn(new Column($options));
-        $columns = $datatables->getColumns();
-        $column = array_shift($columns);
-        $this->assertEquals(false, $column->isOrderable());
-        $this->assertEquals(true, $column->isVisible());
+        $this->assertEquals($query, $search->getQuery());
+
+        // We want to also make sure that the proper Builder instance gets passed into the callback by testing query here too
+        $search->search(function(Builder $builder) use ($query) {
+            $this->assertEquals($query, $builder->getQuery());
+        });
+
+        $search->run();
     }
 }

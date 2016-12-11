@@ -43,11 +43,35 @@ class Builder
     }
 
     /**
-     * @return callable
+     * Return search query string.
+     *
+     * @return string
      */
     public function getQuery()
     {
+        return $this->query;
+    }
+
+    /**
+     * @return callable
+     */
+    public function getSearch()
+    {
         return $this->searchCallback;
+    }
+
+    /**
+     * Set query string.
+     *
+     * @param $query string
+     *
+     * @return $this
+     */
+    public function query($query)
+    {
+        $this->query = $query;
+
+        return $this;
     }
 
     /**
