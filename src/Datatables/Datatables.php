@@ -2,6 +2,7 @@
 
 namespace MClassic\Datatables;
 
+use MClassic\Datatables\Column\Column;
 use MClassic\Datatables\Engine\Legacy;
 use MClassic\Datatables\Engine\Modern;
 use MClassic\Datatables\Engine\ProtocolEngine;
